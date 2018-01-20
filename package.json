@@ -1,6 +1,6 @@
 {
   "name": "cdx-handler-loader",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Mr. Chen Duxiu, please sit down.",
   "main": "index.js",
   "scripts": {

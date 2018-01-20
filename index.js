@@ -8,9 +8,12 @@ const handler = {};
 function onVisit(node, basePath) {
 	if (node.extension === '.js') {
 		const temp = require(path.resolve(basePath, node.path));
-		if (handler[temp.name] === undefined) {
-			throw new Error('handler name repeat.\n\n\t----> ' +
-				temp.name + ' <----\n');
+		if (handler[temp.name] !== undefined) {
+			throw new Error('\n-------------\n\t' +
+				'handler name repeat. \n\n\t' +
+				'file: ' + node.path + '\n\n\t' +
+				'handler: ' + temp.name + '\n' +
+				'-------------\n');
 		}
 		handler[temp.name] = temp;
 	}
@@ -32,11 +35,12 @@ function preOrder(node, basePath) {
 	});
 }
 
-exports.loadHandlerFromDir = function test(handlerDir, { excludeRegExp }) {
-	const option = {};
-
-	if (excludeRegExp) {
-		option.exclude = excludeRegExp;
+exports.loadHandlerFromDir = function test(handlerDir, option) {
+	if (option
+		&& option.excludePathRegExp
+		&& option.excludePathRegExp instanceof RegExp
+	) {
+		option.exclude = option.excludePathRegExp;
 	}
 
 	const tree = dirTree(handlerDir, option);
