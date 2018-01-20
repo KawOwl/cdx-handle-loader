@@ -8,6 +8,10 @@ const handler = {};
 function onVisit(node, basePath) {
 	if (node.extension === '.js') {
 		const temp = require(path.resolve(basePath, node.path));
+		if (handler[temp.name] === undefined) {
+			throw new Error('handler name repeat.\n\n\t----> ' +
+				temp.name + ' <----\n');
+		}
 		handler[temp.name] = temp;
 	}
 }
@@ -28,8 +32,14 @@ function preOrder(node, basePath) {
 	});
 }
 
-exports.loadHandlerFromDir = function test(handlerDir) {
-	const tree = dirTree(handlerDir);
+exports.loadHandlerFromDir = function test(handlerDir, { excludeRegExp }) {
+	const option = {};
+
+	if (excludeRegExp) {
+		option.exclude = excludeRegExp;
+	}
+
+	const tree = dirTree(handlerDir, option);
 	const basePath = path.resolve(handlerDir, '../');
 	preOrder(tree, basePath);
 }
